@@ -121,53 +121,28 @@ onAuthStateChanged(auth, async (user) => {
     location.href = "./login.html";
   }
 });
-/** PASSO 1: salvar imóvel e ir para mídia (robusto: id OU name) */
-const propertyForm = qs("#propertyForm");
-
+/** PASSO 1: salvar imóvel e ir para mídia */
+const propertyForm = document.getElementById("propertyForm");
 if (page === "property-new.html" && propertyForm) {
   propertyForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // pega por name OU id (igual fizemos no login)
-    const titleEl =
-      document.querySelector('[name="title"]') || document.getElementById("title");
-    const priceEl =
-      document.querySelector('[name="price"]') || document.getElementById("price");
-    const cityEl =
-      document.querySelector('[name="city"]') || document.getElementById("city");
-    const neighborhoodEl =
-      document.querySelector('[name="neighborhood"]') || document.getElementById("neighborhood");
-    const descriptionEl =
-      document.querySelector('[name="description"]') || document.getElementById("description");
+    const getVal = (name, id) =>
+      (document.querySelector(`[name="${name}"]`) || document.getElementById(id))?.value?.trim?.() ?? "";
 
-    if (!titleEl || !priceEl || !cityEl || !neighborhoodEl || !descriptionEl) {
-      alert(
-        "Não encontrei os campos do formulário. Verifique se existem IDs (title, price, city, neighborhood, description) " +
-        "ou name='title' etc."
-      );
-      return;
-    }
+    const title = getVal("title", "title");
+    const city = getVal("city", "city");
+    const neighborhood = getVal("neighborhood", "neighborhood");
+    const description = getVal("description", "description");
 
-    const title = titleEl.value.trim();
-    const priceRaw = String(priceEl.value || "").trim();
-    const city = cityEl.value.trim();
-    const neighborhood = neighborhoodEl.value.trim();
-    const description = descriptionEl.value.trim();
+    const priceRaw =
+      (document.querySelector('[name="price"]') || document.getElementById("price"))?.value ?? "";
+    const price = Number(String(priceRaw).replace(/\./g, "").replace(",", "."));
 
-    if (!title || !priceRaw || !city || !neighborhood) {
+    if (!title || !price || !city || !neighborhood) {
       alert("Preencha título, preço, cidade e bairro.");
       return;
     }
-
-    // aceita 1700000, 1.700.000, 1,700,000
-    const price = Number(priceRaw.replace(/\./g, "").replace(/,/g, "."));
-    if (!Number.isFinite(price) || price <= 0) {
-      alert("Preço inválido. Ex: 1700000");
-      return;
-    }
-
-    const btn = propertyForm.querySelector('button[type="submit"]');
-    if (btn) btn.disabled = true;
 
     try {
       const user = auth.currentUser;
@@ -186,12 +161,10 @@ if (page === "property-new.html" && propertyForm) {
         videoUrl: ""
       });
 
-      location.href = `./property-media.html?id=${encodeURIComponent(docRef.id)}`;
+      location.href = `./property-media.html?id=${docRef.id}`;
     } catch (err) {
       console.error(err);
       alert("Erro ao salvar: " + (err?.message || err));
-    } finally {
-      if (btn) btn.disabled = false;
     }
   });
 }
