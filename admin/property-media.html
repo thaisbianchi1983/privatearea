@@ -1,1 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PrivateArea Admin | Mídias</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="admin">
+  <main class="card">
+    <h1>Mídias do imóvel</h1>
+    <p id="propHint" class="muted"></p>
 
+    <form id="mediaForm">
+      <label>Fotos (pode selecionar várias)</label>
+      <input id="photos" type="file" accept="image/*" multiple />
+
+      <label style="margin-top:12px;">Vídeo (opcional)</label>
+      <input id="video" type="file" accept="video/*" />
+
+      <button type="submit" style="margin-top:16px;">Enviar e ir para Preview</button>
+      <button type="button" id="skipBtn" style="margin-top:10px;">Pular mídia e ir para Preview</button>
+
+      <p id="status" class="muted" style="margin-top:10px;"></p>
+    </form>
+  </main>
+
+  <script type="module" src="./admin.js"></script>
+</body>
+</html>
