@@ -68,11 +68,12 @@ async function requireActiveUser(user) {
 }
 /** LOGIN */
 const loginForm = qs("#loginForm");
+
 if (page === "login.html" && loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Aceita tanto name quanto id (à prova de erro)
+    // Aceita tanto name quanto id (robusto)
     const emailEl =
       document.querySelector('input[name="email"]') ||
       document.getElementById("email");
@@ -91,6 +92,10 @@ if (page === "login.html" && loginForm) {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+
+      // 🔥 Redireciona após login
+      location.href = "./dashboard.html";
+
     } catch (err) {
       console.error(err);
       alert("Erro no login: " + (err?.message || err));
