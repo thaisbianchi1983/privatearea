@@ -40,6 +40,19 @@ const storage = getStorage(app);
 
 const qs = (s) => document.querySelector(s);
 const page = location.pathname.split("/").pop();
+/** LOGOUT */
+const logoutBtn = document.querySelector("#logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      location.href = "./login.html";
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao sair.");
+    }
+  });
+}
 
 function getIdParam() {
   return new URLSearchParams(location.search).get("id");
