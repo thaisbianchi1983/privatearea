@@ -3,35 +3,42 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PrivateArea Admin | Novo Imóvel</title>
+  <title>PrivateArea Admin | Novo imóvel</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
+
 <body class="bg">
   <main class="card">
-     <button id="logoutBtn" style="float:right; margin-bottom:10px;">Sair</button>
+    <button id="logoutBtn" class="ghost" type="button">Sair</button>
+
     <h1>Novo imóvel</h1>
-    <p class="muted">No próximo passo vamos salvar no banco.</p>
+    <p class="muted">Vamos salvar no banco e ir para fotos/vídeo.</p>
 
-    <form>
-      <label>Título</label>
-      <input type="text" placeholder="Ex: Cobertura com vista..." />
+    <!-- IMPORTANTE: id="propertyForm" -->
+    <form id="propertyForm">
+      <label for="title">Título</label>
+      <input id="title" type="text" required />
 
-      <label>Preço</label>
-      <input type="number" placeholder="Ex: 1600000" />
+      <label for="price">Preço</label>
+      <input id="price" type="number" min="1" step="1" required />
 
-      <label>Cidade</label>
-      <input type="text" placeholder="Ex: São Paulo" />
+      <label for="city">Cidade</label>
+      <input id="city" type="text" required />
 
-      <label>Bairro</label>
-      <input type="text" placeholder="Ex: Moema" />
+      <label for="neighborhood">Bairro</label>
+      <input id="neighborhood" type="text" required />
 
-      <label>Descrição</label>
-      <input type="text" placeholder="Ex: 3 suítes, 2 vagas..." />
+      <label for="description">Descrição</label>
+      <input id="description" type="text" />
 
-      <button type="button">Salvar (próximo passo)</button>
+      <!-- botão com id, e também submit -->
+      <button id="saveBtn" type="submit">Salvar (próximo passo)</button>
+
+      <p id="status" class="muted" style="margin-top:10px;"></p>
     </form>
   </main>
 
-  <script type="module" src="./admin.js"></script>
+  <!-- cache-buster pra você não ficar presa em versão antiga -->
+  <script type="module" src="./admin.js?v=1"></script>
 </body>
 </html>
