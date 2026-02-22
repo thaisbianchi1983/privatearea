@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PrivateArea Admin | Login</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg">
+  <main class="card">
+    <h1>PrivateArea Admin</h1>
+    <p class="muted">Acesso restrito.</p>
+
+    <form id="loginForm">
+      <label>E-mail</label>
+      <input id="email" type="email" autocomplete="email" required />
+
+      <label>Senha</label>
+      <input id="password" type="password" autocomplete="current-password" required />
+
+      <button type="submit">Entrar</button>
+      <p id="msg" class="muted"></p>
+    </form>
+  </main>
+
+  <script type="module" src="./admin.js"></script>
+</body>
+</html>
