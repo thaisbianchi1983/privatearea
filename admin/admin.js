@@ -4,13 +4,13 @@ import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10
 
 // COLE AQUI o firebaseConfig (vamos pegar já já)
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  projectId: "SEU_PROJECT_ID",
-  storageBucket: "SEU_PROJETO.appspot.com",
-  messagingSenderId: "SEU_SENDER_ID",
-  appId: "SEU_APP_ID"
-};
+    apiKey: "AIzaSyBu4_6-QirTzY7GK2bcoZWJkAQyZGtNk6s",
+    authDomain: "privatearea-5a498.firebaseapp.com",
+    projectId: "privatearea-5a498",
+    storageBucket: "privatearea-5a498.firebasestorage.app",
+    messagingSenderId: "456227099445",
+    appId: "1:456227099445:web:be79819ba19424c113f27c"
+  };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
