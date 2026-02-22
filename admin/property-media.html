@@ -3,28 +3,34 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PrivateArea Admin | Mídias</title>
+  <title>PrivateArea Admin | Mídia do imóvel</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
-<body class="admin">
+<body class="bg">
   <main class="card">
-     <button id="logoutBtn" style="float:right; margin-bottom:10px;">Sair</button>
+    <button id="logoutBtn" class="ghost">Sair</button>
+
     <h1>Mídias do imóvel</h1>
     <p id="propHint" class="muted"></p>
 
     <form id="mediaForm">
-      <label>Fotos (pode selecionar várias)</label>
-      <input id="photos" type="file" accept="image/*" multiple />
+      <label>Links de fotos (um por linha)</label>
+      <textarea id="photoUrls" rows="6" placeholder="https://..."></textarea>
+      <p class="muted">Dica: suba as fotos no Google Drive, coloque como “qualquer pessoa com o link pode ver”, e cole aqui os links diretos.</p>
 
-      <label style="margin-top:12px;">Vídeo (opcional)</label>
-      <input id="video" type="file" accept="video/*" />
+      <label>Link do vídeo (YouTube/Vimeo/Drive) (opcional)</label>
+      <input id="videoUrl" type="url" placeholder="https://..." />
 
-      <button type="submit" style="margin-top:16px;">Enviar e ir para Preview</button>
-      <button type="button" id="skipBtn" style="margin-top:10px;">Pular mídia e ir para Preview</button>
+      <button type="submit">Salvar mídias e ir para Preview</button>
+
+      <button type="button" id="skipBtn" class="ghost" style="margin-top:10px;">
+        Pular mídia e ir para Preview
+      </button>
 
       <p id="status" class="muted" style="margin-top:10px;"></p>
     </form>
   </main>
-  <script type="module" src="./admin.js?v=2"></script>
+
+  <script type="module" src="./admin.js"></script>
 </body>
 </html>
