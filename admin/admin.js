@@ -28,7 +28,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBu4_6-QirTzY7GK2bcoZWJkAQyZGtNk6s",
   authDomain: "privatearea-5a498.firebaseapp.com",
   projectId: "privatearea-5a498",
-  storageBucket: "privatearea-5a498.firebasestorage.app",
+  storageBucket: "privatearea-5a498.appspot.com",
   messagingSenderId: "456227099445",
   appId: "1:456227099445:web:be79819ba19424c113f27c"
 };
