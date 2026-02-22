@@ -66,14 +66,28 @@ async function requireActiveUser(user) {
   if (data.active !== true) throw new Error("Usuário inativo.");
   return data;
 }
-
 /** LOGIN */
 const loginForm = qs("#loginForm");
 if (page === "login.html" && loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = qs('input[name="email"]').value.trim();
-    const password = qs('input[name="password"]').value;
+
+    // Aceita tanto name quanto id (à prova de erro)
+    const emailEl =
+      document.querySelector('input[name="email"]') ||
+      document.getElementById("email");
+
+    const passEl =
+      document.querySelector('input[name="password"]') ||
+      document.getElementById("password");
+
+    if (!emailEl || !passEl) {
+      alert('Campos não encontrados. Use id="email"/id="password" ou name="email"/name="password".');
+      return;
+    }
+
+    const email = emailEl.value.trim();
+    const password = passEl.value;
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -83,7 +97,6 @@ if (page === "login.html" && loginForm) {
     }
   });
 }
-
 /** PROTEÇÃO ADMIN */
 onAuthStateChanged(auth, async (user) => {
   const isAdminPage = location.pathname.includes("/admin/");
