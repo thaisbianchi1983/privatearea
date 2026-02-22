@@ -15,14 +15,6 @@ import {
   updateDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
-
 /** Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyBu4_6-QirTzY7GK2bcoZWJkAQyZGtNk6s",
@@ -36,8 +28,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
-
 const page = location.pathname.split("/").pop();
 
 const $ = (sel) => document.querySelector(sel);
@@ -192,73 +182,64 @@ if (page === "property-new.html") {
   });
 }
 
-/** PASSO 2: upload de fotos/vídeo (seu html precisa ter #mediaForm, #photos, #video, #skipBtn, #propHint, #status) */
-if (page === "property-media.html") {
-  window.addEventListener("DOMContentLoaded", () => {
-    const mediaForm = document.getElementById("mediaForm");
-    if (!mediaForm) return;
+/** PASSO 2 (SEM STORAGE): salvar links de fotos/vídeo */
+const mediaForm = qs("#mediaForm");
+if (page === "property-media.html" && mediaForm) {
+  const propertyId = getIdParam();
+  const hint = qs("#propHint");
+  const statusEl = qs("#status");
+  const skipBtn = qs("#skipBtn");
 
-    const propertyId = getIdParam();
-    const hint = $("#propHint");
-    const statusEl = $("#status");
-    const skipBtn = $("#skipBtn");
+  if (hint) hint.textContent = propertyId ? `Imóvel ID: ${propertyId}` : "Faltou o parâmetro ?id=...";
 
-    if (hint) hint.textContent = propertyId ? `Imóvel ID: ${propertyId}` : "Faltou ?id=";
+  const goPreview = () => {
+    location.href = `./property-preview.html?id=${propertyId}`;
+  };
 
-    const goPreview = () => location.href = `./property-preview.html?id=${propertyId}`;
-
-    if (skipBtn) {
-      skipBtn.addEventListener("click", () => {
-        if (!propertyId) return alert("Faltou o id do imóvel.");
-        goPreview();
-      });
-    }
-
-    mediaForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  if (skipBtn) {
+    skipBtn.addEventListener("click", () => {
       if (!propertyId) return alert("Faltou o id do imóvel.");
-
-      const photos = Array.from($("#photos")?.files || []);
-      const video = ($("#video")?.files || [])[0];
-
-      try {
-        if (statusEl) statusEl.textContent = "Enviando...";
-
-        const uploadedPhotoUrls = [];
-        for (let i = 0; i < photos.length; i++) {
-          const file = photos[i];
-          const path = `propertyMedia/${propertyId}/photos/${Date.now()}_${i}_${file.name}`;
-          const storageRef = ref(storage, path);
-          await uploadBytes(storageRef, file);
-          const url = await getDownloadURL(storageRef);
-          uploadedPhotoUrls.push(url);
-        }
-
-        let videoUrl = "";
-        if (video) {
-          const path = `propertyMedia/${propertyId}/video/${Date.now()}_${video.name}`;
-          const storageRef = ref(storage, path);
-          await uploadBytes(storageRef, video);
-          videoUrl = await getDownloadURL(storageRef);
-        }
-
-        const propRef = doc(db, "properties", propertyId);
-        const payload = { updatedAt: serverTimestamp() };
-        if (uploadedPhotoUrls.length) payload.photos = uploadedPhotoUrls;
-        if (videoUrl) payload.videoUrl = videoUrl;
-
-        await updateDoc(propRef, payload);
-
-        if (statusEl) statusEl.textContent = "Mídia enviada!";
-        goPreview();
-      } catch (err) {
-        showError("Erro no upload", err);
-        if (statusEl) statusEl.textContent = "";
-      }
+      goPreview();
     });
+  }
+
+  mediaForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!propertyId) return alert("Faltou o id do imóvel.");
+
+    // pega links (um por linha)
+    const raw = (qs("#photoUrls")?.value || "").trim();
+    const photos = raw
+      ? raw.split("\n").map(s => s.trim()).filter(Boolean)
+      : [];
+
+    const videoUrl = (qs("#videoUrl")?.value || "").trim();
+
+    try {
+      statusEl.textContent = "Salvando...";
+
+      const propRef = doc(db, "properties", propertyId);
+      const payload = {
+        updatedAt: serverTimestamp(),
+      };
+
+      // salva sempre como array (mesmo vazio)
+      payload.photos = photos;
+
+      // salva string (ou vazio)
+      payload.videoUrl = videoUrl;
+
+      await updateDoc(propRef, payload);
+
+      statusEl.textContent = "Mídias salvas!";
+      goPreview();
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = "";
+      alert("Erro ao salvar mídias: " + (err?.message || err));
+    }
   });
 }
-
 /** PASSO 3: preview + publicar (seu html precisa ter #preview, #publishBtn, #backBtn, #status) */
 if (page === "property-preview.html") {
   window.addEventListener("DOMContentLoaded", async () => {
