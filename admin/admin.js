@@ -121,23 +121,53 @@ onAuthStateChanged(auth, async (user) => {
     location.href = "./login.html";
   }
 });
-
-/** PASSO 1: salvar imóvel e ir para mídia */
+/** PASSO 1: salvar imóvel e ir para mídia (robusto: id OU name) */
 const propertyForm = qs("#propertyForm");
+
 if (page === "property-new.html" && propertyForm) {
   propertyForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const title = qs('[name="title"]').value.trim();
-    const price = Number(qs('[name="price"]').value);
-    const city = qs('[name="city"]').value.trim();
-    const neighborhood = qs('[name="neighborhood"]').value.trim();
-    const description = qs('[name="description"]').value.trim();
+    // pega por name OU id (igual fizemos no login)
+    const titleEl =
+      document.querySelector('[name="title"]') || document.getElementById("title");
+    const priceEl =
+      document.querySelector('[name="price"]') || document.getElementById("price");
+    const cityEl =
+      document.querySelector('[name="city"]') || document.getElementById("city");
+    const neighborhoodEl =
+      document.querySelector('[name="neighborhood"]') || document.getElementById("neighborhood");
+    const descriptionEl =
+      document.querySelector('[name="description"]') || document.getElementById("description");
 
-    if (!title || !price || !city || !neighborhood) {
+    if (!titleEl || !priceEl || !cityEl || !neighborhoodEl || !descriptionEl) {
+      alert(
+        "Não encontrei os campos do formulário. Verifique se existem IDs (title, price, city, neighborhood, description) " +
+        "ou name='title' etc."
+      );
+      return;
+    }
+
+    const title = titleEl.value.trim();
+    const priceRaw = String(priceEl.value || "").trim();
+    const city = cityEl.value.trim();
+    const neighborhood = neighborhoodEl.value.trim();
+    const description = descriptionEl.value.trim();
+
+    if (!title || !priceRaw || !city || !neighborhood) {
       alert("Preencha título, preço, cidade e bairro.");
       return;
     }
+
+    // aceita 1700000, 1.700.000, 1,700,000
+    const price = Number(priceRaw.replace(/\./g, "").replace(/,/g, "."));
+    if (!Number.isFinite(price) || price <= 0) {
+      alert("Preço inválido. Ex: 1700000");
+      return;
+    }
+
+    const btn = propertyForm.querySelector('button[type="submit"]');
+    if (btn) btn.disabled = true;
 
     try {
       const user = auth.currentUser;
@@ -156,14 +186,15 @@ if (page === "property-new.html" && propertyForm) {
         videoUrl: ""
       });
 
-      location.href = `./property-media.html?id=${docRef.id}`;
+      location.href = `./property-media.html?id=${encodeURIComponent(docRef.id)}`;
     } catch (err) {
       console.error(err);
       alert("Erro ao salvar: " + (err?.message || err));
+    } finally {
+      if (btn) btn.disabled = false;
     }
   });
 }
-
 /** PASSO 2: upload de fotos/vídeo */
 const mediaForm = qs("#mediaForm");
 if (page === "property-media.html" && mediaForm) {
